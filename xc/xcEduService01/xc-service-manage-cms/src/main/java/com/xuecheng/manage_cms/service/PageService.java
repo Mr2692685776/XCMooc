@@ -3,7 +3,9 @@ package com.xuecheng.manage_cms.service;
 import com.xuecheng.api.cms.CmsPageControllerApi;
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
+import com.xuecheng.framework.domain.cms.response.CmsCode;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.*;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -99,6 +101,10 @@ public class PageService  {
     }
 
     public ResponseResult del(String id) {
+        CmsPage page = this.findById(id);
+        if (null == page){
+            ExceptionCast.cast(CmsCode.CMS_COURSE_IDNULL);
+        }
         cmsPageRepository.deleteById(id);
         return ResponseResult.SUCCESS();
     }
