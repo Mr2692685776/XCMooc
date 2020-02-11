@@ -1,5 +1,6 @@
 package com.xuecheng.api.course;
 
+import com.xuecheng.framework.domain.course.CoursePic;
 import com.xuecheng.framework.domain.course.Teachplan;
 import com.xuecheng.framework.domain.course.ext.TeachplanNode;
 import com.xuecheng.framework.model.response.ResponseResult;
@@ -18,4 +19,13 @@ public interface CourseControllerApi {
 
     @ApiOperation("添加课程计划")
     ResponseResult addTeachplan(Teachplan teachplan);
+
+    @ApiOperation("获取课程基础信息")
+    CoursePic findCoursePic(String courseId);
+
+    @ApiOperation("添加课程图片")
+    ResponseResult addCoursePic(String courseId,String pic);
+
+    @ApiOperation("删除课程图片")
+    ResponseResult deleteCoursePic(String courseId);
 }

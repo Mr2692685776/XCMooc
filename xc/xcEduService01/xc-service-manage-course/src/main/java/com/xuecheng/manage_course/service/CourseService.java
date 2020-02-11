@@ -1,15 +1,13 @@
 package com.xuecheng.manage_course.service;
 
 import com.xuecheng.framework.domain.course.CourseBase;
+import com.xuecheng.framework.domain.course.CoursePic;
 import com.xuecheng.framework.domain.course.Teachplan;
 import com.xuecheng.framework.domain.course.ext.TeachplanNode;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
 import com.xuecheng.framework.model.response.ResponseResult;
-import com.xuecheng.manage_course.dao.CourseBaseRepository;
-import com.xuecheng.manage_course.dao.CourseMapper;
-import com.xuecheng.manage_course.dao.TeachplanMapper;
-import com.xuecheng.manage_course.dao.TeachplanRepository;
+import com.xuecheng.manage_course.dao.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +34,10 @@ public class CourseService {
 
     @Autowired
     private TeachplanRepository teachplanRepository;
+
+    @Autowired
+    private CoursePicRepository coursePicRepository;
+
 
     public TeachplanNode findTeachplanList(String courseId) {
         TeachplanNode teachplanNode = teachplanMapper.selectList(courseId);
@@ -97,5 +99,26 @@ public class CourseService {
         }
         Teachplan teachplan = teachplanList.get(0);
         return teachplan.getId();
+    }
+
+    public CoursePic findCoursepic(String courseId) {
+        Optional<CoursePic> coursePic = coursePicRepository.findById(courseId);
+        if (coursePic.isPresent()){
+            return coursePic.get();
+        }else {
+            return null;
+        }
+    }
+
+    public void saveCoursePic(String courseId, String pic) {
+        CoursePic coursePic = new CoursePic();
+        coursePic.setCourseid(courseId);
+        coursePic.setPic(pic);
+        coursePicRepository.save(coursePic);
+    }
+
+    public ResponseResult deleteCoursePic(String courseId) {
+        coursePicRepository.deleteById(courseId);
+        return new ResponseResult(CommonCode.SUCCESS);
     }
 }
