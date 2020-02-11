@@ -31,4 +31,7 @@ public interface CmsPageControllerApi {
 
     @ApiOperation("根据id删除页面")
     ResponseResult del(String id);
+
+    @ApiOperation("保存页面")
+     CmsPageResult save(CmsPage cmsPage);
 }

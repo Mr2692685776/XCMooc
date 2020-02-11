@@ -232,4 +232,18 @@ public class PageService  {
         String html = generateHtml(template, model);
         return html;
     }
+
+    public CmsPageResult save(CmsPage cmsPage) {
+
+        CmsPage page = cmsPageRepository.findByPageNameAndSiteIdAndPageWebPath(cmsPage.getPageName(),
+                cmsPage.getSiteId(), cmsPage.getPageWebPath());
+        if (null!=page){
+//            更新
+            return this.update(page.getPageId(),cmsPage);
+        }else {
+//            新增
+            return add(cmsPage);
+        }
+
+    }
 }
