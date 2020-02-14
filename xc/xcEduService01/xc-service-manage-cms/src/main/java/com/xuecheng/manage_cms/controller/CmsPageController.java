@@ -63,4 +63,15 @@ public class CmsPageController implements CmsPageControllerApi {
     public CmsPageResult save(@RequestBody CmsPage cmsPage) {
         return pageService.save(cmsPage);
     }
+
+    /**
+     * 发布页面
+     * @param pageId
+     * @return
+     */
+    @Override
+    @PostMapping("/postPage/{pageId}")
+    public ResponseResult post(@PathVariable("pageId") String pageId) {
+        return pageService.postPage(pageId);
+    }
 }

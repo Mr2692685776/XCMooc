@@ -78,7 +78,5 @@ public class Producer01 {
                 e.printStackTrace();
             }
         }
-
-
     }
 }

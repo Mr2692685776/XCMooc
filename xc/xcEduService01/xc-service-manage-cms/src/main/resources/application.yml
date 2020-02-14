@@ -11,6 +11,12 @@ spring:
     cache: false
     settings:
       template_update_delay: 0
+  rabbitmq:
+    host: 106.13.191.207
+    port: 5672
+    username: guest
+    password: guest
+    virtualHost: /
 
 eureka:
   client:
@@ -22,3 +28,9 @@ eureka:
     prefer-ip-address:  true  #将自己的ip地址注册到Eureka服务中
     ip-address: ${IP_ADDRESS:127.0.0.1}
     instance-id: ${spring.application.name}:${server.port} #指定实例id
+
+xuecheng:
+  mq:
+    #cms客户端监控的队列名称（不同的客户端监控的队列不能重复）
+    queue: queue_cms_postpage_01
+    routingKey: 5a751fab6abb5044e0d19ea1	#此routingKey为门户站点ID
