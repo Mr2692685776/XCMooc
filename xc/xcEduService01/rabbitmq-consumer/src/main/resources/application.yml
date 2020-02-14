@@ -1,8 +1,8 @@
 server:
-  port: 44000
+  port: 44001
 spring:
   application:
-    name: test-rabbitmq-producer
+    name: test-rabbitmq-consumer
   rabbitmq:
     host: 106.13.191.207
     port: 5672

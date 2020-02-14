@@ -17,12 +17,12 @@ import java.util.concurrent.TimeoutException;
 public class Producer01 {
 
     //队列
-    private static final String QUEUE = "helloworld";
+    private static final String QUEUE_NAME = "helloMQ";
 
     public static void main(String[] args) {
         //通过连接工厂创建新的连接和mq建立连接
         ConnectionFactory connectionFactory = new ConnectionFactory();
-        connectionFactory.setHost("127.0.0.1");
+        connectionFactory.setHost("106.13.191.207");
         connectionFactory.setPort(5672);//端口
         connectionFactory.setUsername("guest");
         connectionFactory.setPassword("guest");
@@ -32,7 +32,7 @@ public class Producer01 {
         Connection connection = null;
         Channel channel = null;
         try {
-            //建立新连接
+            //建立TCP新连接
             connection = connectionFactory.newConnection();
             //创建会话通道,生产者和mq服务所有通信都在channel通道中完成
             channel = connection.createChannel();
@@ -46,7 +46,7 @@ public class Producer01 {
              * 4、autoDelete 自动删除，队列不再使用时是否自动删除此队列，如果将此参数和exclusive参数设置为true就可以实现临时队列（队列不用了就自动删除）
              * 5、arguments 参数，可以设置一个队列的扩展参数，比如：可设置存活时间
              */
-            channel.queueDeclare(QUEUE,true,false,false,null);
+            channel.queueDeclare(QUEUE_NAME,true,false,false,null);
             //发送消息
             //参数：String exchange, String routingKey, BasicProperties props, byte[] body
             /**
@@ -57,8 +57,8 @@ public class Producer01 {
              * 4、body，消息内容
              */
             //消息内容
-            String message = "hello world 黑马程序员";
-            channel.basicPublish("",QUEUE,null,message.getBytes());
+            String message = "武汉加油";
+            channel.basicPublish("",QUEUE_NAME,null,message.getBytes());
             System.out.println("send to mq "+message);
         } catch (Exception e) {
             e.printStackTrace();
