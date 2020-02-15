@@ -2,6 +2,7 @@ package com.xuecheng.manage_course.service;
 
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
 import com.xuecheng.framework.domain.course.CourseBase;
 import com.xuecheng.framework.domain.course.CourseMarket;
 import com.xuecheng.framework.domain.course.CoursePic;
@@ -197,5 +198,54 @@ public class CourseService {
         String pageId = cp.getCmsPage().getPageId();
         String pageUrl = previewUrl+pageId;
         return new CoursePublishResult(CommonCode.SUCCESS,pageUrl);
+    }
+
+    /**
+     * 课程发布
+     * 1. 查询课程信息
+     * 2. 生成页面信息
+     * 3. 发布页面
+     * 4. 更新课程状态
+     * 5. 返回结果
+     * @param
+     * @return
+     */
+    public CoursePublishResult publish(String courseId) {
+//       查询课程信息
+        CourseBase courseBase = this.findCourseBaseById(courseId);
+//        生成页面信息，并发布页面
+        CmsPostPageResult cmsPostPageResult = publish_page(courseId);
+//        更新状态
+        if (!cmsPostPageResult.isSuccess()){
+            ExceptionCast.cast(CommonCode.FAIL);
+        }
+//        更新课程状态
+        this.saveCoursePubState(courseId);
+//        返回结果
+        return new CoursePublishResult(CommonCode.SUCCESS,cmsPostPageResult.getPageUrl());
+
+    }
+//    更新课程状态
+    private CourseBase saveCoursePubState(String courseId){
+        CourseBase courseBase = this.findCourseBaseById(courseId);
+        courseBase.setStatus("202002");
+        CourseBase save = courseBaseRepository.save(courseBase);
+        return save;
+    }
+
+    public CmsPostPageResult publish_page(String courseId){
+//        生成页面信息
+        CourseBase one = this.findCourseBaseById(courseId);
+        CmsPage cmsPage = new CmsPage();
+        cmsPage.setSiteId(publish_siteId);//课程预览站点
+        cmsPage.setTemplateId(publish_templateId);
+        cmsPage.setPageName(courseId+".html");
+        cmsPage.setPageAliase(one.getName());
+        cmsPage.setPageWebPath(publish_page_webpath);
+        cmsPage.setPagePhysicalPath(publish_page_physicalpath);
+        cmsPage.setDataUrl(publish_dataUrlPre+courseId);
+        CmsPostPageResult result = cmsPageClient.postPageQuick(cmsPage);
+        return result;
+
     }
 }

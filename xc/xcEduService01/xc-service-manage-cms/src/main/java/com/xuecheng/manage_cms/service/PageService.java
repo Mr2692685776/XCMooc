@@ -6,14 +6,17 @@ import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.xuecheng.api.cms.CmsPageControllerApi;
 import com.xuecheng.framework.domain.cms.CmsPage;
+import com.xuecheng.framework.domain.cms.CmsSite;
 import com.xuecheng.framework.domain.cms.CmsTemplate;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.domain.cms.response.CmsCode;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.*;
 import com.xuecheng.manage_cms.config.RabbitMQConfig;
 import com.xuecheng.manage_cms.dao.CmsPageRepository;
+import com.xuecheng.manage_cms.dao.CmsSiteRepository;
 import com.xuecheng.manage_cms.dao.CmsTemplateRepository;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -65,6 +68,9 @@ public class PageService  {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private CmsSiteRepository cmsSiteRepository;
 
     /**
      * 页面查询方法
@@ -258,6 +264,7 @@ public class PageService  {
 
 
     /**
+     * 页面发布
      * 1. 执行页面静态化
      * 2. 保存文件
      * 3.发送消息
@@ -312,5 +319,48 @@ public class PageService  {
         page.setHtmlFileId(fileId);
         cmsPageRepository.save(page);
         return page;
+    }
+
+    /**
+     * 1. 保存页面
+     * 2.页面发布：页面静态化, 存储静态文件,发送消息
+     * 3. 课程路径
+     *
+     * @param cmsPage
+     * @return
+     */
+    public CmsPostPageResult postPageQuick(CmsPage cmsPage) {
+        
+//        保存页面
+        CmsPageResult save = this.save(cmsPage);
+        if (!save.isSuccess()){
+            return new CmsPostPageResult(CommonCode.FAIL,null);
+        }
+        CmsPage saveCmsPage = save.getCmsPage();
+//         页面静态化
+        String pageId = saveCmsPage.getPageId();
+        ResponseResult responseResult = this.postPage(pageId);
+        if(!responseResult.isSuccess()){
+            return new CmsPostPageResult(CommonCode.FAIL,null);
+        }
+
+//        课程路径=站点域名+站点webpath+页面webpath+页面名称
+        String siteId = saveCmsPage.getSiteId();
+//        获取站点
+        CmsSite cmsSite = this.findCmsSiteById(siteId);
+        if (null == cmsSite){
+            return new CmsPostPageResult(CommonCode.FAIL,null);
+        }
+        String pageUrl = cmsSite.getSiteDomain()+saveCmsPage.getPagePhysicalPath()+saveCmsPage.getPageName();
+        return new CmsPostPageResult(CommonCode.SUCCESS,pageUrl);
+    }
+
+    private CmsSite findCmsSiteById(String id){
+        Optional<CmsSite> optional = cmsSiteRepository.findById(id);
+        if (optional.isPresent()){
+            return optional.get();
+        }else {
+            return null;
+        }
     }
 }

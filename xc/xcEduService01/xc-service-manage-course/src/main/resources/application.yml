@@ -29,9 +29,14 @@ eureka:
     ip-address: ${IP_ADDRESS:127.0.0.1}
     instance-id: ${spring.application.name}:${server.port} #指定实例id
 
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+
 course-publish:
   siteId: 5a751fab6abb5044e0d19ea1
-  templateId: 5e428b10c055a72c0461068f
+#  templateId: 5e428b10c055a72c0461068f
+  templateId: 5e428bde31d8cc1e2ee08278
   previewUrl: http://www.xuecheng.com/cms/preview/
   pageWebPath: /course/detail/
   pagePhysicalPath: /course/detail/
