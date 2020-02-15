@@ -352,6 +352,8 @@ public class PageService  {
             return new CmsPostPageResult(CommonCode.FAIL,null);
         }
         String pageUrl = cmsSite.getSiteDomain()+saveCmsPage.getPagePhysicalPath()+saveCmsPage.getPageName();
+
+//       保存课程发布信息
         return new CmsPostPageResult(CommonCode.SUCCESS,pageUrl);
     }
 
